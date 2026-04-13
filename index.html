@@ -54,6 +54,40 @@
     100% { transform: translateY(40px); }
   }
 
+  .line-h {
+    position: fixed;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(0,245,255,0.0) 5%, rgba(0,245,255,0.6) 50%, rgba(0,245,255,0.0) 95%, transparent 100%);
+    animation: moveH 7s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(0,245,255,0.4), 0 0 20px rgba(0,245,255,0.15);
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  .line-v {
+    position: fixed;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent 0%, rgba(255,0,200,0.0) 5%, rgba(255,0,200,0.6) 50%, rgba(255,0,200,0.0) 95%, transparent 100%);
+    animation: moveV 9s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(255,0,200,0.4), 0 0 20px rgba(255,0,200,0.15);
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  @keyframes moveH {
+    0%   { top: 8%; }
+    50%  { top: 92%; }
+    100% { top: 8%; }
+  }
+
+  @keyframes moveV {
+    0%   { left: 4%; }
+    50%  { left: 96%; }
+    100% { left: 4%; }
+  }
+
   .orb {
     position: fixed;
     border-radius: 50%;
@@ -114,6 +148,18 @@
     100% { top: 100vh; opacity: 0; }
   }
 
+  .clock {
+    position: fixed;
+    bottom: 20px;
+    right: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(85,85,112,0.35);
+    z-index: 10;
+    pointer-events: none;
+  }
+
   .profile {
     display: flex;
     flex-direction: column;
@@ -128,7 +174,17 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .name-block { text-align: center; }
+  .name-block {
+    text-align: center;
+    /* reserve space so layout doesn't jump */
+    min-width: 200px;
+    min-height: 1.1em;
+  }
+
+  .name-wrap {
+    position: relative;
+    display: inline-block;
+  }
 
   .name {
     font-family: 'Syne', sans-serif;
@@ -140,14 +196,87 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    display: inline-block;
+    position: relative;
+    min-width: 4px;
+  }
+
+  .name.glitching {
     animation: nameGlow 3s ease-in-out infinite alternate;
   }
 
   @keyframes nameGlow {
     from { filter: drop-shadow(0 0 20px rgba(0,245,255,0.3)); }
-    to { filter: drop-shadow(0 0 40px rgba(255,0,200,0.5)); }
+    to   { filter: drop-shadow(0 0 40px rgba(255,0,200,0.5)); }
   }
 
+  .type-cursor {
+    display: inline-block;
+    width: 3px;
+    height: 0.85em;
+    background: var(--cyan);
+    margin-left: 2px;
+    vertical-align: middle;
+    border-radius: 1px;
+    animation: blink 0.7s step-end infinite;
+    box-shadow: 0 0 8px var(--cyan);
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+
+  /* Glitch layers on top of name text */
+  .glitch-layer {
+    position: absolute;
+    top: 0; left: 0;
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(42px, 10vw, 72px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .glitch-layer.r {
+    background: linear-gradient(135deg, var(--magenta), var(--magenta));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: glitchR 4s infinite;
+  }
+
+  .glitch-layer.g {
+    background: linear-gradient(135deg, var(--green), var(--green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: glitchG 4s infinite;
+  }
+
+  .glitch-layer.inactive {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+
+  @keyframes glitchR {
+    0%, 80%, 100% { opacity: 0; transform: translate(0); clip-path: none; }
+    82% { opacity: 0.75; transform: translate(5px, -2px); clip-path: polygon(0 20%, 100% 20%, 100% 50%, 0 50%); }
+    84% { opacity: 0.75; transform: translate(-4px, 2px); clip-path: polygon(0 60%, 100% 60%, 100% 85%, 0 85%); }
+    86% { opacity: 0; }
+  }
+
+  @keyframes glitchG {
+    0%, 80%, 100% { opacity: 0; transform: translate(0); clip-path: none; }
+    83% { opacity: 0.6; transform: translate(-4px, 1px); clip-path: polygon(0 5%, 100% 5%, 100% 35%, 0 35%); }
+    85% { opacity: 0.6; transform: translate(4px, -1px); clip-path: polygon(0 70%, 100% 70%, 100% 95%, 0 95%); }
+    87% { opacity: 0; }
+  }
+
+  /* Avatar */
   .avatar-wrap { position: relative; order: -1; }
 
   .avatar-ring {
@@ -169,12 +298,11 @@
 
   @keyframes spin {
     from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    to   { transform: rotate(360deg); }
   }
 
   .avatar {
-    width: 100px;
-    height: 100px;
+    width: 100px; height: 100px;
     border-radius: 50%;
     background: linear-gradient(135deg, #0a0a1a, #111122);
     display: flex;
@@ -187,15 +315,50 @@
     border: 2px solid rgba(0,245,255,0.1);
     position: relative;
     overflow: hidden;
+    animation: avatarGlitch 3.5s infinite;
   }
 
-  .avatar::after {
-    content: '';
+  .avatar .glitch-r,
+  .avatar .glitch-g {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(0,245,255,0.1), transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
   }
 
+  .avatar .glitch-r { color: var(--magenta); animation: avGlitchR 3.5s infinite; }
+  .avatar .glitch-g { color: var(--green);   animation: avGlitchG 3.5s infinite; }
+
+  @keyframes avatarGlitch {
+    0%, 80%, 100% { transform: translate(0); }
+    82% { transform: translate(-3px, 1px) skewX(-2deg); }
+    84% { transform: translate(3px, -2px) skewX(2deg); }
+    86% { transform: translate(-1px, 1px); }
+    88% { transform: translate(0); }
+  }
+
+  @keyframes avGlitchR {
+    0%, 80%, 100% { opacity: 0; transform: translate(0); clip-path: none; }
+    82% { opacity: 0.75; transform: translate(5px, -2px); clip-path: polygon(0 25%, 100% 25%, 100% 50%, 0 50%); }
+    84% { opacity: 0.75; transform: translate(-4px, 2px); clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%); }
+    86% { opacity: 0; }
+  }
+
+  @keyframes avGlitchG {
+    0%, 80%, 100% { opacity: 0; transform: translate(0); clip-path: none; }
+    83% { opacity: 0.6; transform: translate(-4px, 1px); clip-path: polygon(0 10%, 100% 10%, 100% 35%, 0 35%); }
+    85% { opacity: 0.6; transform: translate(4px, -1px); clip-path: polygon(0 70%, 100% 70%, 100% 90%, 0 90%); }
+    87% { opacity: 0; }
+  }
+
+  /* Links */
   .links {
     display: flex;
     flex-direction: column;
@@ -221,6 +384,7 @@
 
   .link-item:nth-child(1) { animation-delay: 0.15s; }
   .link-item:nth-child(2) { animation-delay: 0.25s; }
+  .link-item:nth-child(3) { animation-delay: 0.35s; }
 
   .link-item::before {
     content: '';
@@ -247,6 +411,13 @@
     box-shadow: 0 8px 32px rgba(0,133,255,0.15), inset 0 1px 0 rgba(0,133,255,0.1);
   }
 
+  .link-item.server:hover {
+    transform: translateY(-3px) scale(1.01);
+    border-color: rgba(0,255,136,0.4);
+    background: rgba(0,255,136,0.05);
+    box-shadow: 0 8px 32px rgba(0,255,136,0.12), inset 0 1px 0 rgba(0,255,136,0.08);
+  }
+
   .link-item::after {
     content: '';
     position: absolute;
@@ -258,11 +429,11 @@
   }
   .link-item.discord::after { background: #5865f2; }
   .link-item.bluesky::after { background: #0085ff; }
-  .link-item:hover::after { opacity: 1; }
+  .link-item.server::after  { background: var(--green); }
+  .link-item:hover::after   { opacity: 1; }
 
   .icon-wrap {
-    width: 40px;
-    height: 40px;
+    width: 40px; height: 40px;
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -273,15 +444,9 @@
 
   .link-item:hover .icon-wrap { transform: scale(1.1) rotate(-5deg); }
 
-  .icon-wrap.discord-icon {
-    background: rgba(88,101,242,0.15);
-    border: 1px solid rgba(88,101,242,0.2);
-  }
-
-  .icon-wrap.bluesky-icon {
-    background: rgba(0,133,255,0.15);
-    border: 1px solid rgba(0,133,255,0.2);
-  }
+  .icon-wrap.discord-icon { background: rgba(88,101,242,0.15); border: 1px solid rgba(88,101,242,0.2); }
+  .icon-wrap.bluesky-icon { background: rgba(0,133,255,0.15);  border: 1px solid rgba(0,133,255,0.2); }
+  .icon-wrap.server-icon  { background: rgba(0,255,136,0.1);   border: 1px solid rgba(0,255,136,0.2); }
 
   .link-text { flex: 1; }
 
@@ -314,58 +479,11 @@
     color: var(--cyan);
   }
 
-  .name-glitch { position: relative; display: inline-block; }
-
-  .name-glitch::before,
-  .name-glitch::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0; left: 0;
-    background: linear-gradient(135deg, var(--cyan) 0%, var(--magenta) 60%, var(--green) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .name-glitch::before {
-    animation: glitch1 5s infinite;
-    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-  }
-
-  .name-glitch::after {
-    animation: glitch2 5s infinite;
-    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-  }
-
-  @keyframes glitch1 {
-    0%, 90%, 100% { transform: translate(0); opacity: 0; }
-    92% { transform: translate(-2px, 1px); opacity: 0.8; }
-    94% { transform: translate(2px, -1px); opacity: 0.8; }
-    96% { transform: translate(0); opacity: 0; }
-  }
-
-  @keyframes glitch2 {
-    0%, 90%, 100% { transform: translate(0); opacity: 0; }
-    93% { transform: translate(2px, 1px); opacity: 0.8; }
-    95% { transform: translate(-2px, -1px); opacity: 0.8; }
-    97% { transform: translate(0); opacity: 0; }
-  }
-
-  .footer {
-    margin-top: 48px;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: rgba(85,85,112,0.4);
-    text-transform: uppercase;
-    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
-  }
-
   * { cursor: none !important; }
 
   .cursor {
     position: fixed;
-    width: 8px;
-    height: 8px;
+    width: 8px; height: 8px;
     background: var(--cyan);
     border-radius: 50%;
     pointer-events: none;
@@ -376,8 +494,7 @@
 
   .cursor-trail {
     position: fixed;
-    width: 24px;
-    height: 24px;
+    width: 24px; height: 24px;
     border: 1px solid rgba(0,245,255,0.3);
     border-radius: 50%;
     pointer-events: none;
@@ -390,8 +507,11 @@
 <body>
 
 <div class="scanline"></div>
+<div class="line-h"></div>
+<div class="line-v"></div>
 <div class="cursor" id="cursor"></div>
 <div class="cursor-trail" id="cursorTrail"></div>
+<div class="clock" id="clock"></div>
 
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
@@ -401,14 +521,20 @@
 
   <div class="profile">
     <div class="name-block">
-      <div class="name">
-        <span class="name-glitch" data-text="Nox">Nox</span>
+      <div class="name-wrap">
+        <span class="name" id="nameEl"></span><span class="type-cursor" id="typeCursor"></span>
+        <span class="glitch-layer r inactive" id="glitchR"></span>
+        <span class="glitch-layer g inactive" id="glitchG"></span>
       </div>
     </div>
     <div class="avatar-wrap">
       <div class="avatar-ring"></div>
       <div class="avatar-ring-mask"></div>
-      <div class="avatar">N</div>
+      <div class="avatar">
+        N
+        <span class="glitch-r">N</span>
+        <span class="glitch-g">N</span>
+      </div>
     </div>
   </div>
 
@@ -440,32 +566,147 @@
       <span class="arrow">→</span>
     </a>
 
-  </div>
+    <a class="link-item server" href="https://discord.gg/SrnSRXHEvj" target="_blank" rel="noopener">
+      <div class="icon-wrap server-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#00ff88">
+          <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.03.056a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+        </svg>
+      </div>
+      <div class="link-text">
+        <span class="link-label">Discord Server</span>
+        <span class="link-sub">join the server</span>
+      </div>
+      <span class="arrow">→</span>
+    </a>
 
-  <div class="footer">nox · built different</div>
+  </div>
 
 </div>
 
 <script>
+  // CLOCK
+  function updateClock() {
+    const now = new Date();
+    const ist = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const h = String(ist.getHours()).padStart(2, '0');
+    const m = String(ist.getMinutes()).padStart(2, '0');
+    const s = String(ist.getSeconds()).padStart(2, '0');
+    document.getElementById('clock').textContent = `${h}:${m}:${s} IST`;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // TYPEWRITER ENGINE
+  const nameEl     = document.getElementById('nameEl');
+  const typeCursor = document.getElementById('typeCursor');
+  const glitchR    = document.getElementById('glitchR');
+  const glitchG    = document.getElementById('glitchG');
+
+  let current = '';
+
+  function setGlitch(active, text) {
+    if (active) {
+      glitchR.textContent = text;
+      glitchG.textContent = text;
+      glitchR.classList.remove('inactive');
+      glitchG.classList.remove('inactive');
+      nameEl.classList.add('glitching');
+    } else {
+      glitchR.classList.add('inactive');
+      glitchG.classList.add('inactive');
+      nameEl.classList.remove('glitching');
+    }
+  }
+
+  function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async function typeChar(char, delay) {
+    await wait(delay);
+    current += char;
+    nameEl.textContent = current;
+  }
+
+  async function deleteChar(delay) {
+    await wait(delay);
+    current = current.slice(0, -1);
+    nameEl.textContent = current;
+  }
+
+  async function deleteAll(charDelay) {
+    while (current.length > 0) {
+      await deleteChar(charDelay);
+    }
+  }
+
+  async function runLoop() {
+    while (true) {
+      // — Phase 1: type N-O-N (typo) then fix to NOX —
+      setGlitch(false, '');
+
+      await wait(500);
+      await typeChar('N', 160);
+      await wait(100);
+      await typeChar('O', 170);
+      await wait(90);
+      await typeChar('N', 150);   // typo
+      await wait(500);            // person notices mistake
+      await deleteChar(130);      // backspace the N
+      await wait(180);
+      await typeChar('X', 160);   // correct it
+      await wait(800);            // sit on NOX
+
+      // glitch fires while NOX is shown
+      setGlitch(true, 'NOX');
+      await wait(1800);           // glitch plays for a bit
+      setGlitch(false, '');
+
+      // — Phase 2: erase NOX, type nulvs —
+      await deleteAll(110);
+      await wait(300);
+
+      await typeChar('n', 150);
+      await wait(80);
+      await typeChar('u', 140);
+      await wait(70);
+      await typeChar('l', 145);
+      await wait(80);
+      await typeChar('v', 140);
+      await wait(70);
+      await typeChar('s', 150);
+      await wait(900);            // sit on nulvs
+
+      // — Phase 3: erase nulvs, loop back —
+      await deleteAll(110);
+      await wait(400);
+    }
+  }
+
+  window.addEventListener('load', () => {
+    setTimeout(runLoop, 500);
+  });
+
+  // CURSOR TRAIL
   const cursor = document.getElementById('cursor');
-  const trail = document.getElementById('cursorTrail');
+  const trail  = document.getElementById('cursorTrail');
   let mx = 0, my = 0, tx = 0, ty = 0;
 
   document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
     cursor.style.left = mx + 'px';
-    cursor.style.top = my + 'px';
+    cursor.style.top  = my + 'px';
   });
 
   function animateTrail() {
     tx += (mx - tx) * 0.12;
     ty += (my - ty) * 0.12;
     trail.style.left = tx + 'px';
-    trail.style.top = ty + 'px';
+    trail.style.top  = ty + 'px';
     requestAnimationFrame(animateTrail);
   }
   animateTrail();
 </script>
 
 </body>
-          </html>
+</html>
