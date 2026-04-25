@@ -132,11 +132,7 @@
         <div class="avatar-wrap">
           <div class="avatar-ring"></div>
           <div class="avatar-ring-mask"></div>
-          <div class="avatar">
-            N
-            <span class="glitch-r">N</span>
-            <span class="glitch-g">N</span>
-          </div>
+          <div class="avatar">N<span class="glitch-r">N</span><span class="glitch-g">N</span></div>
         </div>
       </div>
       <div class="links">
@@ -191,12 +187,10 @@
         document.getElementById('clock').textContent = `${h}:${m}:${s} IST`;
       }
       updateClock(); setInterval(updateClock, 1000);
-
       const nameEl = document.getElementById('nameEl');
       const glitchR = document.getElementById('glitchR');
       const glitchG = document.getElementById('glitchG');
       let current = '';
-
       function setGlitch(active, text) {
         if (active) {
           glitchR.textContent = text; glitchG.textContent = text;
@@ -207,12 +201,10 @@
           nameEl.classList.remove('glitching');
         }
       }
-
       function wait(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
       async function typeChar(char, delay) { await wait(delay); current += char; nameEl.textContent = current; }
       async function deleteChar(delay) { await wait(delay); current = current.slice(0, -1); nameEl.textContent = current; }
       async function deleteAll(charDelay) { while (current.length > 0) { await deleteChar(charDelay); } }
-
       async function runLoop() {
         while (true) {
           setGlitch(false, ''); await wait(500);
@@ -226,7 +218,6 @@
         }
       }
       window.addEventListener('load', () => { setTimeout(runLoop, 500); });
-
       const cursor = document.getElementById('cursor'); const trail = document.getElementById('cursorTrail');
       let mx = 0, my = 0, tx = 0, ty = 0;
       document.addEventListener('mousemove', e => {
